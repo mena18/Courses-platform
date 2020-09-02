@@ -12,13 +12,16 @@ class Course(models.Model):
     published_at = models.DateTimeField(auto_now_add=True)
     
     # image = models.ImageField()
+
+    def __str__(self):
+        return str(self.id)
     
 
 
 class Lesson(models.Model):
+    course = models.ForeignKey(Course,on_delete=models.CASCADE,related_name='lessons')
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True,null=True)
-    course = models.ForeignKey(Course,on_delete=models.CASCADE)
     video_url = models.URLField()
 
 
