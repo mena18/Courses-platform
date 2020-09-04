@@ -18,7 +18,18 @@ class Course(models.Model):
     
 
 
+class Week(models.Model):
+    course = models.ForeignKey(Course,on_delete=models.CASCADE,related_name='weeks')
+    name = models.CharField(max_length=200,blank=True,null=True)
+    num = models.IntegerField()
+
+
+    def __str__(self):
+        return self.name if self.name else str(self.num)
+
+
 class Lesson(models.Model):
+    week = models.ForeignKey(Week,on_delete=models.CASCADE,related_name='lessons')
     course = models.ForeignKey(Course,on_delete=models.CASCADE,related_name='lessons')
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True,null=True)
