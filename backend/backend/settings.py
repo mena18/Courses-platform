@@ -25,7 +25,7 @@ SECRET_KEY = 'mjw$8^*bvs=&(1c##=d^=_u7klx(u#zq!cli#lauc_8e9=r+p2'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,7 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'rest_framework',
+    'rest_framework.authtoken',
     'courses',
 ]
 
@@ -120,3 +122,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+REST_FRAMEWORK = {
+   'DEFAULT_AUTHENTICATION_CLASSES': (
+       'rest_framework.authentication.BasicAuthentication',
+       'rest_framework.authentication.SessionAuthentication',
+       'rest_framework.authentication.TokenAuthentication',
+   ),
+}

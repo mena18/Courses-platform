@@ -1,11 +1,13 @@
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator,MaxValueValidator
+from django.conf import settings
 # Create your models here.
 
 
 
 class Course(models.Model):
+    instructor = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name="created_courses")
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True,null=True)
     category = models.CharField(max_length=50)

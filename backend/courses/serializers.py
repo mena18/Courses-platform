@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Course,Lesson,Week
+from django.contrib.auth import get_user_model
 
 
 class LessonSerializer(serializers.ModelSerializer):
@@ -37,8 +38,22 @@ class WeekSerializer(serializers.ModelSerializer):
 class CourseSerializer(serializers.ModelSerializer):
 
     weeks = WeekSerializer(many=True, read_only=True)
+    # snippets = serializers.PrimaryKeyRelatedField(many=True, queryset=get_user_model.objects.all())
+    instructor = serializers.ReadOnlyField(source="instructor.username")
 
     class Meta:
         model = Course
-        fields = ('id','title','description','weeks',)
+        fields = ('id','title','description','instructor','weeks')
 
+        extra_kwargs = {
+            'instructor':{'read_only':True},
+        }
+
+
+
+class UserSerializer(serializers.ModelSerializer):
+    created_courses = serializers.PrimaryKeyRelatedField(many=True,queryset = Course.objects.all())
+
+    class Meta:
+        model = get_user_model()
+        fields = ['id','username','created_courses']    

@@ -43,6 +43,13 @@ urlpatterns = [
     path('<int:course_id>/weeks/<int:week_id>/lessons/',lesson_list,name='lesson_list'),
     path('lessons/<int:pk>',lesson_detail,name='lesson_detail'),
 
+
+
+    path('users/', views.UserList.as_view()),
+    path('users/<int:pk>/', views.UserDetail.as_view()),
+
+
+    
     path('',include(router.urls)),
 
 ]

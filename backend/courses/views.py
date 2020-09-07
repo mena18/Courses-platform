@@ -8,6 +8,14 @@ from django.shortcuts import get_object_or_404
 from django.http import Http404
 from rest_framework.decorators import action
 
+
+
+from rest_framework import generics
+from django.contrib.auth import get_user_model
+from rest_framework import permissions
+from .custom_permessions import IsOwnerOrReadOnly
+from rest_framework.authtoken.models import Token
+
 # Create your views here.
 
 def home(request):
@@ -17,6 +25,16 @@ def home(request):
 class courses_view(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
+    permission_classes = [permissions.IsAuthenticated,IsOwnerOrReadOnly]
+
+
+    def create(self,request):
+        ser = self.serializer_class(data=request.data)
+        if(ser.is_valid()):
+            ser.save(instructor=request.user)
+            return Response(ser.data,status=status.HTTP_200_OK)
+        return Response(ser.errors,status=status.HTTP_400_BAD_REQUEST)
+
 
 
     @action(detail=True,methods=['POST'])
@@ -100,6 +118,25 @@ class lessons_view(viewsets.ModelViewSet):
             return Response(ser.data)
         return Response(ser.errors)
     
+
+
+
+
+# User
+
+
+from .serializers import UserSerializer
+
+class UserList(generics.ListAPIView):
+    queryset = get_user_model().objects.all()
+    serializer_class = UserSerializer
+
+
+class UserDetail(generics.RetrieveAPIView):
+    queryset = get_user_model().objects.all()
+    serializer_class = UserSerializer
+
+
 
 
 # class list_courses(APIView):
