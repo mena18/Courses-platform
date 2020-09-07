@@ -1,7 +1,7 @@
 from django.shortcuts import render,HttpResponse
 from rest_framework import viewsets,status
 from rest_framework.views import APIView
-from .models import Course,Lesson,Week
+from .models import Course,Lesson,Week,User_registration
 from .serializers import CourseSerializer,LessonSerializer,WeekSerializer
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
@@ -25,28 +25,37 @@ def home(request):
 class courses_view(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    permission_classes = [permissions.IsAuthenticated,IsOwnerOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly,IsOwnerOrReadOnly]
 
 
     def create(self,request):
         ser = self.serializer_class(data=request.data)
         if(ser.is_valid()):
             ser.save(instructor=request.user)
-            return Response(ser.data,status=status.HTTP_200_OK)
+            return Response(ser.data,status=status.HTTP_201_CREATED)
         return Response(ser.errors,status=status.HTTP_400_BAD_REQUEST)
 
 
 
     @action(detail=True,methods=['POST'])
     def register(self,request,pk=None):
-        res = self.serializer_class(self.get_object())
-        return Response({'sucess':'user registerd in this course','course details':res.data},status=status.HTTP_200_OK)
+        try:
+            course = Course.objects.get(id=pk)
+        except:
+            return Response({"detail":"course not found"},status=status.HTTP_404_NOT_FOUND)
 
 
-    @action(detail=True,methods=['PATCH'])
-    def rate(self,request,pk=None):
-        res = self.serializer_class(self.get_object())
-        return Response({'sucess':'rating courses','course details':res.data},status=status.HTTP_200_OK)
+        try:
+            regis = User_registration.objects.create(user=request.user,course=course,rating=0)
+            return Response({'sucess':'user registerd in this course'},status=status.HTTP_200_OK)
+        except:
+            return Response({"detail":"you already registered"},status=status.HTTP_406_NOT_ACCEPTABLE)
+
+
+    # @action(detail=True,methods=['PATCH'])
+    # def rate(self,request,pk=None):
+    #     res = self.serializer_class(self.get_object())
+    #     return Response({'sucess':'rating courses','course details':res.data},status=status.HTTP_200_OK)
 
 
     @action(detail=True,methods=['GET'])
