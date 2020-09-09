@@ -2,6 +2,8 @@ from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator,MaxValueValidator
 from django.conf import settings
+from django.db.models import Sum,Count
+from django.db.models import Q
 # Create your models here.
 
 
@@ -12,7 +14,10 @@ class Course(models.Model):
     description = models.TextField(blank=True,null=True)
     category = models.CharField(max_length=50)
     published_at = models.DateTimeField(auto_now_add=True)
-    
+    rating = models.FloatField(default=0)
+
+
+
     # image = models.ImageField()
 
     def __str__(self):
@@ -46,3 +51,12 @@ class User_registration(models.Model):
     class Meta:
         index_together = [['user', 'course']]
         unique_together = [['user', 'course']]
+
+
+
+    def save(self, *args, **kwargs): 
+        obj = User_registration.objects.filter(Q(course_id=self.course_id) & ~Q(rating=0) & ~Q(id=self.id)).aggregate(rate = Sum("rating"),counter=Count('rating'))
+        obj['rate'] = 0 if obj['rate'] == None else obj['rate']
+        self.course.rating =  (obj['rate']+int(self.rating)) / (obj['counter']+1)
+        self.course.save()
+        return super(User_registration, self).save(*args, **kwargs)

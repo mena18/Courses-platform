@@ -38,12 +38,14 @@ class WeekSerializer(serializers.ModelSerializer):
 class CourseSerializer(serializers.ModelSerializer):
 
     weeks = WeekSerializer(many=True, read_only=True)
+    # rating = serializers.CharField(source='get_rating',read_only=True)
+
     # snippets = serializers.PrimaryKeyRelatedField(many=True, queryset=get_user_model.objects.all())
     instructor = serializers.ReadOnlyField(source="instructor.username")
 
     class Meta:
         model = Course
-        fields = ('id','title','description','instructor','weeks')
+        fields = ('id','title','description','instructor','weeks','rating')
 
         extra_kwargs = {
             'instructor':{'read_only':True},
@@ -57,3 +59,12 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ['id','username','created_courses']    
+
+
+
+class StudentSerializer(serializers.ModelSerializer):
+    # created_courses = serializers.PrimaryKeyRelatedField(many=True,queryset = Course.objects.all())
+
+    class Meta:
+        model = get_user_model()
+        fields = ['id','username']    
