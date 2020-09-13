@@ -35,7 +35,7 @@ class test_courses(APITestCase):
 
     def test_list_courses(self):
         course = self.core.course
-        response = self.client.get(reverse('courses:course-list'),format='json')
+        response = self.client.get(reverse('courses_api:course-list'),format='json')
         self.assertEqual(response.status_code,status.HTTP_200_OK)
         self.assertEqual(response.data[0]['title'],course.title)
         self.assertEqual(response.data[0]['description'],course.description)
@@ -50,7 +50,7 @@ class test_courses(APITestCase):
 
     def test_detail_courses(self):
         course = self.core.course
-        response = self.client.get(reverse('courses:course-detail',args=[course.id]),format='json')
+        response = self.client.get(reverse('courses_api:course-detail',args=[course.id]),format='json')
         self.assertEqual(response.status_code,status.HTTP_200_OK)
         self.assertEqual(response.data['title'],course.title)
         self.assertEqual(response.data['description'],course.description)
@@ -70,7 +70,7 @@ class test_courses(APITestCase):
     def test_create_courses_valid(self):
         data = {'title':'new_title','description':'new desc'}
 
-        response = self.get_instructor_not_owner.post(reverse('courses:course-list'),format='json',data=data)
+        response = self.get_instructor_not_owner.post(reverse('courses_api:course-list'),format='json',data=data)
         
         self.assertEqual(response.status_code,status.HTTP_201_CREATED)
         self.assertEqual(response.data['title'],data['title'])
@@ -80,7 +80,7 @@ class test_courses(APITestCase):
     def test_create_courses_failed(self):  
         data = {'title':'new_title','description':'new desc'}
 
-        response = self.get_student_enrolled.post(reverse('courses:course-list'),format='json',data=data)
+        response = self.get_student_enrolled.post(reverse('courses_api:course-list'),format='json',data=data)
 
         self.assertEqual(response.status_code,status.HTTP_403_FORBIDDEN)
 
@@ -107,7 +107,7 @@ class test_courses(APITestCase):
         
         data = {'title':'new_title','description':'new desc'}
 
-        response = self.get_instructor_owner.put(reverse('courses:course-detail',args=[course.id]),format='json',data=data)
+        response = self.get_instructor_owner.put(reverse('courses_api:course-detail',args=[course.id]),format='json',data=data)
         
         self.assertEqual(response.status_code,status.HTTP_200_OK)
         self.assertEqual(response.data['title'],data['title'])
@@ -120,9 +120,9 @@ class test_courses(APITestCase):
 
         responses=[]
 
-        responses.append(self.get_instructor_not_owner.put(reverse('courses:course-detail',args=[course.id]),format='json',data=data))
-        responses.append(self.get_student_enrolled.put(reverse('courses:course-detail',args=[course.id]),format='json',data=data))
-        responses.append(self.get_student_un_enrolled.put(reverse('courses:course-detail',args=[course.id]),format='json',data=data))
+        responses.append(self.get_instructor_not_owner.put(reverse('courses_api:course-detail',args=[course.id]),format='json',data=data))
+        responses.append(self.get_student_enrolled.put(reverse('courses_api:course-detail',args=[course.id]),format='json',data=data))
+        responses.append(self.get_student_un_enrolled.put(reverse('courses_api:course-detail',args=[course.id]),format='json',data=data))
         
 
         for response in responses:
@@ -145,7 +145,7 @@ class test_courses(APITestCase):
     def test_delete_courses_valid(self):
         course = self.core.create_course()
         id = course.id
-        response = self.get_instructor_owner.delete(reverse('courses:course-detail',args=[id]),format='json')
+        response = self.get_instructor_owner.delete(reverse('courses_api:course-detail',args=[id]),format='json')
         
         self.assertEqual(response.status_code,status.HTTP_204_NO_CONTENT)
         self.assertEqual(len(Course.objects.filter(id=id)),0)
@@ -157,9 +157,9 @@ class test_courses(APITestCase):
         
         responses=[]
 
-        responses.append(self.get_instructor_not_owner.delete(reverse('courses:course-detail',args=[course.id]),format='json'))
-        responses.append(self.get_student_enrolled.delete(reverse('courses:course-detail',args=[course.id]),format='json'))
-        responses.append(self.get_student_un_enrolled.delete(reverse('courses:course-detail',args=[course.id]),format='json'))
+        responses.append(self.get_instructor_not_owner.delete(reverse('courses_api:course-detail',args=[course.id]),format='json'))
+        responses.append(self.get_student_enrolled.delete(reverse('courses_api:course-detail',args=[course.id]),format='json'))
+        responses.append(self.get_student_un_enrolled.delete(reverse('courses_api:course-detail',args=[course.id]),format='json'))
         
 
         for response in responses:

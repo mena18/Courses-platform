@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'accounts',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,7 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'courses',
-    'accounts',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -133,3 +134,9 @@ REST_FRAMEWORK = {
        'rest_framework.authentication.TokenAuthentication',
    ),
 }
+
+
+LOGIN_REDIRECT_URL = 'courses:home'
+LOGIN_URL = 'accounts:login'
+LOGOUT_REDIRECT_URL = 'accounts:login'
+CRISPY_TEMPLATE_PACK = 'uni_form'

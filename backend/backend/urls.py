@@ -20,12 +20,15 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    
-    path('api-token-auth/', views.obtain_auth_token),
-    path('courses/', include('courses.urls')),
+    path('accounts/',include('accounts.urls')),
+    path('', include('courses.urls')),
+
+
+    # path('api-token-auth/', views.obtain_auth_token),
+    # path("api/",include('courses.api.urls')),
 ]
 
 if settings.DEBUG:
     urlpatterns+=[
-        path('api-auth/', include('rest_framework.urls')), # only for testing
+        path('api-auth/', include('rest_framework.urls')), # only for testing (rest frameowkr auth templates)
     ]

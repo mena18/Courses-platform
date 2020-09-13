@@ -1,5 +1,5 @@
 from rest_framework import permissions
-from .models import Course,User_registration
+from courses.models import Course,User_registration
 
 class Course_permession(permissions.BasePermission):
 
