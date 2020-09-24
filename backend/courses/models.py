@@ -12,6 +12,24 @@ from .fields import OrderField
 from django.urls import reverse
 
 
+
+from django.db import connections
+from django.db.models.query import QuerySet
+
+
+def explain(self):
+    cursor = connections[self.db].cursor()
+    query, params = self.query.sql_with_params()
+    cursor.execute('explain %s' % query, params)
+    return query
+
+QuerySet.explain = explain
+
+"""
+from courses.models import *
+Course.objects.all().explain()
+"""
+
 class Subject(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(max_length=200,unique=True)
@@ -112,7 +130,6 @@ class User_registration(models.Model):
     class Meta:
         index_together = [['user', 'course']]
         unique_together = [['user', 'course']]
-
 
 
 # class Lesson(models.Model):

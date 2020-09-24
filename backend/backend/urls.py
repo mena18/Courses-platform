@@ -21,7 +21,7 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/',include('accounts.urls')),
-    path('', include('courses.urls')),
+    path('courses/', include('courses.urls')),
 
 
     # path('api-token-auth/', views.obtain_auth_token),
