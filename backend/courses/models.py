@@ -44,7 +44,7 @@ class Subject(models.Model):
 
 class Course(models.Model):
     instructor = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name="created_courses")
-    subject = models.ForeignKey(Subject,on_delete=models.CASCADE)
+    subject = models.ForeignKey(Subject,on_delete=models.CASCADE,related_name='courses')
 
     title = models.CharField(max_length=200)
     slug = models.SlugField()
@@ -94,6 +94,8 @@ class Content(models.Model):
 
 
 
+from django.template.loader import render_to_string
+
 class ItemBase(models.Model):
     instructor = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name="%(class)s_related")
 
@@ -106,6 +108,9 @@ class ItemBase(models.Model):
 
     def __str__(self):
         return self.title
+
+    def render(self):
+        return render_to_string(f'courses/content/{self._meta.model_name}.html',{'item':self})
 
 
 class Text(ItemBase):
