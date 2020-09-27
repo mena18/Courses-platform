@@ -2,7 +2,7 @@ from django.shortcuts import render,HttpResponse,get_object_or_404,redirect
 from django.views.generic.base import TemplateResponseMixin,View
 from django.urls import reverse_lazy
 from django.views.generic import ListView,CreateView,UpdateView,DetailView,DeleteView
-from .models import Course,Module,Content
+from .models import Course,Module,Content,Subject
 from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from .froms import ModuleFormSet
@@ -10,6 +10,14 @@ from django.apps import apps
 from django.forms.models import modelform_factory
 
 from braces.views import CsrfExemptMixin, JsonRequestResponseMixin
+
+
+
+
+# -----------------
+# instructor views
+# -----------------
+
 
 class CourseOwnerMixin(LoginRequiredMixin,PermissionRequiredMixin):
     model = Course
@@ -26,13 +34,13 @@ class CourseFormMixin(LoginRequiredMixin,PermissionRequiredMixin):
 
 
 
-class CourseListView(CourseOwnerMixin,ListView):
+class CourseManageListView(CourseOwnerMixin,ListView):
     template_name = "courses/manage/course/list.html"
     permission_required = "courses.view_course"
 
-class CourseDetailView(CourseOwnerMixin,DetailView):
-    template_name = "courses/manage/course/list.html"
-    permission_required = "courses.view_course"
+# class CourseDetailView(CourseOwnerMixin,DetailView):
+#     template_name = "courses/manage/course/list.html"
+#     permission_required = "courses.view_course"
 
 class CourseCreateView(CourseFormMixin,CreateView):
     permission_required = "courses.add_course"
@@ -154,6 +162,43 @@ class ContentOrderView(CsrfExemptMixin,JsonRequestResponseMixin,View):
         for id, order in self.request_json.items():
             Content.objects.filter(id=id,module__course__instructor=request.user).update(order=order)
         return self.render_json_response({'saved': 'OK'})
+
+
+
+
+
+
+# -----------------
+# Student views
+# -----------------
+
+from django.db.models import Count
+
+class CourseListView(TemplateResponseMixin,View):
+    model = Course
+    template_name = "courses/course/list.html"
+
+    def get(self,request,subject=None):
+        subjects = Subject.objects.annotate(total_courses=Count('courses'))
+        courses = Course.objects.annotate(total_modules=Count('modules'))
+        if(subject):
+            subject = get_object_or_404(Subject,slug=subject)
+            courses = Course.objects.filter(subject = subject)
+        return self.render_to_response({"subjects":subjects,"subject":subject,"courses":courses})
+
+
+from students.forms import CourseEnrollForm
+
+class CourseDetailView(DetailView):
+    model = Course
+    template_name = "courses/course/detail.html"
+
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        context['enroll_form'] = CourseEnrollForm(initial={'course':self.object})
+
+        return context
+
 
 def home(request): 
     return render(request,"home.html")

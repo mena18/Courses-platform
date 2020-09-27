@@ -4,13 +4,13 @@ from . import views
 app_name = "courses"
 
 urlpatterns = [
-    
-    path("",views.CourseListView.as_view(),name="course-list"),
+    path('',views.CourseListView.as_view(),name="course-list"),
+    path("courses/",views.CourseManageListView.as_view(),name="course-manage-list"),
     # path("courses/<int:pk>",views.CourseDetailView.as_view(),name="course-detail"),
-    path("create",views.CourseCreateView.as_view(),name="course-create"),
-    path("<int:pk>/update",views.CourseUpdateView.as_view(),name="course-edit"),
-    path("<int:pk>/delete",views.CourseDeleteView.as_view(),name="course-delete"),
-    path("<int:pk>/module",views.CourseModuleUpdateView.as_view(),name="course-module-update"),
+    path("courses/create",views.CourseCreateView.as_view(),name="course-create"),
+    path("courses/<int:pk>/update",views.CourseUpdateView.as_view(),name="course-edit"),
+    path("courses/<int:pk>/delete",views.CourseDeleteView.as_view(),name="course-delete"),
+    path("courses/<int:pk>/module",views.CourseModuleUpdateView.as_view(),name="course-module-update"),
 
     path('module/<int:module_id>/',views.ModuleContentListView.as_view(),name='module-content-list'),
     path('module/<int:module_id>/content/<model_name>/create/',views.ContentCreateUpdateView.as_view(),name='module-content-create'),
@@ -22,5 +22,13 @@ urlpatterns = [
     # path("module/<int:id>",views.CourseListView.as_view(),name="module-content-list"),
     # path("courses/edit-module/<int:id>",views.CourseListView.as_view(),name="course-module-update"),
     # path("",views.home,name="home"),
+
+
+# students
+
+
+path('subject/<slug:subject>/',views.CourseListView.as_view(),name='course-list-subject'),
+path('courses/<slug:slug>/',views.CourseDetailView.as_view(),name='course-detail'),
+
 
 ]

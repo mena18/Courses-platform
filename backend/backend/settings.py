@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 
+import os
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
@@ -42,7 +44,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'courses',
+    'students',
     'crispy_forms',
+    'embed_video',
 ]
 
 MIDDLEWARE = [
@@ -136,7 +140,11 @@ REST_FRAMEWORK = {
 }
 
 
-LOGIN_REDIRECT_URL = 'courses:home'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+LOGIN_REDIRECT_URL = 'courses:course-list'
 LOGIN_URL = 'accounts:login'
 LOGOUT_REDIRECT_URL = 'accounts:login'
 CRISPY_TEMPLATE_PACK = 'uni_form'
