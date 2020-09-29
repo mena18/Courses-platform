@@ -1,10 +1,14 @@
 from django.urls import path,include
 from . import views
+from django.views.decorators.cache import cache_page
 
 app_name = "courses"
 
 urlpatterns = [
+    # path('',cache_page(60 * 15)(views.CourseListView.as_view()),name="course-list"),
     path('',views.CourseListView.as_view(),name="course-list"),
+    path('non_cache/',views.CourseListView_non_cached.as_view(),name="course-list-no-cache"),
+    
     path("courses/",views.CourseManageListView.as_view(),name="course-manage-list"),
     # path("courses/<int:pk>",views.CourseDetailView.as_view(),name="course-detail"),
     path("courses/create",views.CourseCreateView.as_view(),name="course-create"),
